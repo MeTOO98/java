@@ -31,7 +31,7 @@ node('docker') {
         }
 
         stage('Docker Login') {
-            dockerLogin(credentialsId: params.DOCKER_CREDS_ID)
+            dockerlogin(credentialsId: params.DOCKER_CREDS_ID)
         }
 
         stage('Docker Push') {
