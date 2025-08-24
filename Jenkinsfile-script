@@ -2,6 +2,11 @@ node("agent-0"){
     def maven = tool name: 'mvn-3-5-4', type: 'maven'
     env.DOCKER_USER = credentials("docker-username")
     def DOCKER_PASS = credentials("docker-password")
+
+    stage("Checkout SCM"){
+        checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Hassan-Eid-Hassan/java.git']])
+    }
+
     stage("Build App"){
         env.PATH = "${maven}/bin:${env.PATH}"
         sh "mvn package install"
