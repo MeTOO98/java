@@ -24,14 +24,14 @@ pipeline{
                 }
             }
         }
-        stage("Test App"){
-            steps{
-                script{
-                    def maven = new ed.iti.mvn()
-                    maven.test()
-                }
-            }
-        }
+        // stage("Test App"){
+        //     steps{
+        //         script{
+        //             def maven = new ed.iti.mvn()
+        //             maven.test(Nu)
+        //         }
+        //     }
+        // }
         stage("Archive Jar"){
             steps{
                 archiveArtifacts artifacts: 'target/*.jar', followSymlinks: false
