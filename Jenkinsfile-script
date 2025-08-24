@@ -10,14 +10,16 @@ node("agent-0"){
     stage("Checkout SCM"){
         checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Hassan-Eid-Hassan/java.git']])
     }
-
-    stage("Build App"){
-        env.PATH = "${maven}/bin:${env.PATH}"
-        sh "mvn package install"
+    parallel {
+        stage("Build App"){
+            env.PATH = "${maven}/bin:${env.PATH}"
+            sh "mvn package install"
+        }
+        stage("Test App"){
+            sh "touch python.py"
+        }
     }
-    // stage("Test App"){
-    //        sh "mvn test"
-    // }
+
     stage("Archive Jar"){
         archiveArtifacts artifacts: 'target/*.jar', followSymlinks: false
     }
