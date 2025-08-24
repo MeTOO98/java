@@ -1,6 +1,11 @@
+properties([
+    disableConcurrentBuilds(),
+    disableResume(),
+    parameters([string(defaultValue: '${BUILD_NUMBER}', name: 'IMAGE_NUM')])
+])
+
 node("agent-0"){
     def maven = tool name: 'mvn-3-5-4', type: 'maven'
-
 
     stage("Checkout SCM"){
         checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Hassan-Eid-Hassan/java.git']])
