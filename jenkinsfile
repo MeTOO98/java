@@ -1,0 +1,69 @@
+pipeline {
+     agent {
+        label 'docker'
+     }
+    environment {
+        DOCKER_REGISTRY = "docker.io"           
+        DOCKER_IMAGE = "mohamedelmetwally/java-app"  
+    }
+
+    stages {
+        stage('Checkout Source') {
+            steps {
+                echo "getting our application source code"
+                checkout scm  
+            }
+        }
+
+        stage('Build JAR') {
+            steps {
+                echo "Building Java application"
+                sh 'mvn clean package -DskipTests'  
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo "Building Docker image"
+                sh """
+                docker build -t $DOCKER_IMAGE .
+                """
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                echo "Logging in to Docker"
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-credentials',  
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin $DOCKER_REGISTRY'
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                echo "Pushing Docker image to Docker Hub"
+                sh "docker push $DOCKER_IMAGE"
+            }
+        }
+    }
+
+     post {
+        always {
+            echo "Cleaning up workspace and dangling Docker images"
+            cleanWs()  
+            sh 'docker system prune -af || true'  
+        }
+        success {
+            echo "Pipeline completed successfully"
+        }
+        failure {
+            echo "Pipeline failed"
+        }
+    }
+}
+
