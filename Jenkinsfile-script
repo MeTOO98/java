@@ -1,8 +1,7 @@
 node("agent-0"){
     tool name: 'mvn-3-5-4', type: 'maven'
-    def env.DOCKER_USER = credentials("docker-username")
-    def env.DOCKER_PASS = credentials("docker-password")
-
+    env.DOCKER_USER = credentials("docker-username")
+    def DOCKER_PASS = credentials("docker-password")
     stage("Build App"){
         sh "mvn package install"
     }
