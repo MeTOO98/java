@@ -23,11 +23,11 @@ node('docker') {
         }
 
         stage('Build JAR') {
-            buildJava(skipTests: true)
+            mvnbuild()
         }
 
         stage('Docker Build') {
-            dockerBuildPush(image: params.DOCKER_IMAGE, tag: tag, onlyBuild: true)
+            buildpushimage(image: params.DOCKER_IMAGE, tag: tag, onlyBuild: true)
         }
 
         stage('Docker Login') {
