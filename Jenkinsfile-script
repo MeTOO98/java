@@ -1,6 +1,6 @@
 node("agent-0"){
     def maven = tool name: 'mvn-3-5-4', type: 'maven'
-    env.DOCKER_USER = credentials("docker-username")
+    def DOCKER_USER = credentials("docker-username")
     def DOCKER_PASS = credentials("docker-password")
 
     stage("Checkout SCM"){
