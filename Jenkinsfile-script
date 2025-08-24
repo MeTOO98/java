@@ -20,9 +20,9 @@ node("agent-0"){
         sh "docker build -t hassaneid/data-iti:v${IMAGE_NUM} ."
     }
     stage("Docker Login"){
-        def DOCKER_USER = credentials('docker-username')
-        def DOCKER_PASS = credentials('docker-password')
-        echo "${DOCKER_USER}"
+        withCredentials([string(credentialsId: 'docker-username', variable: 'DOCKER_USER'), string(credentialsId: 'docker-password', variable: 'DOCKER_PASS')]) {
+            sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}"
+        }
     }
     // stage("Docker push"){
     //         sh "docker push hassaneid/data-iti:v${IMAGE_NUM}"
