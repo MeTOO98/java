@@ -35,7 +35,7 @@ node('docker') {
         }
 
         stage('Docker Push') {
-            dockerBuildPush(image: params.DOCKER_IMAGE, tag: tag, onlyPush: true)
+            buildpushimage(image: params.DOCKER_IMAGE, tag: tag, onlyPush: true)
             sh "docker tag ${params.DOCKER_IMAGE}:${tag} ${params.DOCKER_IMAGE}:latest"
             sh "docker push ${params.DOCKER_IMAGE}:latest"
         }
