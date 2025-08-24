@@ -22,7 +22,7 @@ node("agent-0"){
     stage("Docker Login"){
         def DOCKER_USER = credentials('docker-username')
         def DOCKER_PASS = credentials('docker-password')
-        sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}"
+        echo "${DOCKER_USER}"
     }
     // stage("Docker push"){
     //         sh "docker push hassaneid/data-iti:v${IMAGE_NUM}"
