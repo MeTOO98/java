@@ -1,4 +1,4 @@
-@Library('dekins-lib@main') _ 
+@Library('denkins-lib@main') _ 
 
 node('docker') {
     properties([
@@ -12,7 +12,7 @@ node('docker') {
     def tag = params.DOCKER_TAG?.trim() ? params.DOCKER_TAG : "${env.BUILD_NUMBER}"
 
      stage('Checkout') {
-            gitCheckout()
+            checkout()
         }
 
         stage('Quality') {
@@ -23,16 +23,16 @@ node('docker') {
         }
 
         stage('Build JAR') {
-            mvnbuild()
+            buildmvn()
         }
 
         stage('Docker Build') {
-            buildpushimage(image: params.DOCKER_IMAGE, tag: tag, onlyBuild: true)
+            buildpushimage(image: params.DOCKER_IMAGE, tag: tag,onlyBuild: true)
         }
 
-        stage('Docker Login') {
+       stage('Docker Login') {
             dockerlogin(credentialsId: params.DOCKER_CREDS_ID)
-        }
+       }
 
         stage('Docker Push') {
             buildpushimage(image: params.DOCKER_IMAGE, tag: tag, onlyPush: true)
@@ -44,3 +44,4 @@ node('docker') {
             sh 'docker system prune -af || true'
         }
 
+}
