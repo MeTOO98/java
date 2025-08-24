@@ -1,0 +1,46 @@
+@Library('dekins-lib@main') _ 
+
+node('docker') {
+    properties([
+        parameters([
+            string(name: 'DOCKER_IMAGE', defaultValue: 'mohamedelmetwally/java-app'),
+            string(name: 'DOCKER_TAG', defaultValue: '', description: 'Leave empty = build number'),
+            string(name: 'DOCKER_CREDS_ID', defaultValue: 'docker-credentials')
+        ])
+    ])
+
+    def tag = params.DOCKER_TAG?.trim() ? params.DOCKER_TAG : "${env.BUILD_NUMBER}"
+
+     stage('Checkout') {
+            gitCheckout()
+        }
+
+        stage('Quality') {
+            parallel(
+                "Tests": { sh 'mvn -B test' },
+                "Compile": { sh 'mvn -B compile' }
+            )
+        }
+
+        stage('Build JAR') {
+            buildJava(skipTests: true)
+        }
+
+        stage('Docker Build') {
+            dockerBuildPush(image: params.DOCKER_IMAGE, tag: tag, onlyBuild: true)
+        }
+
+        stage('Docker Login') {
+            dockerLogin(credentialsId: params.DOCKER_CREDS_ID)
+        }
+
+        stage('Docker Push') {
+            dockerBuildPush(image: params.DOCKER_IMAGE, tag: tag, onlyPush: true)
+            sh "docker tag ${params.DOCKER_IMAGE}:${tag} ${params.DOCKER_IMAGE}:latest"
+            sh "docker push ${params.DOCKER_IMAGE}:latest"
+        }
+         stage('Cleanup') {
+            deleteDir()
+            sh 'docker system prune -af || true'
+        }
+
