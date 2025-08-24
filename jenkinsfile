@@ -8,13 +8,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout Source') {
-            steps {
-                echo "getting our application source code"
-                checkout scm  
-            }
-        }
-
         stage('Build JAR') {
             steps {
                 echo "Building Java application"
