@@ -45,6 +45,7 @@ pipeline{
         // }
         stage("Docker deploy"){
             steps{
+                sh "docker stop java-app && docker rm java-app"
                 sh "docker run -d -p 8090:8090 --name java-app hassaneid/data-iti:v${IMAGE_NUM}"
             }
         }
